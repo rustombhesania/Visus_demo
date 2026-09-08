@@ -5,6 +5,11 @@ Run: streamlit run app.py
 import warnings; warnings.filterwarnings("ignore")
 import io, os, tempfile
 
+# Bundle ffmpeg via pip instead of apt, sidesteps Community Cloud's
+# apt mirror issues entirely for mp3/m4a/mp4/aac decoding
+import imageio_ffmpeg
+os.environ["PATH"] = os.path.dirname(imageio_ffmpeg.get_ffmpeg_exe()) + os.pathsep + os.environ.get("PATH", "")
+
 import numpy as np
 import librosa
 import matplotlib
