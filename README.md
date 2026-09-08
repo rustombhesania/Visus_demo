@@ -7,13 +7,23 @@ whole thing for you in its own container, from a GitHub repo.
 
     requirements.txt   Pinned Python deps, librosa locked to >=0.10,<1.0
                         (matches the librosa.feature.tempo fix already
-                        applied to app53_patched.py)
-    packages.txt        System-level libs librosa/soundfile/pretty_midi
-                        need underneath (ffmpeg, libsndfile1)
+                        applied). Includes imageio-ffmpeg, a pip-only
+                        static ffmpeg binary.
+    app53_patched.py    The app itself, already patched to put the
+                        pip-installed ffmpeg on PATH at import time.
 
-Add your actual app file to this folder before pushing:
+No packages.txt on purpose. AUDIO_TYPES in the app includes mp3, m4a,
+mp4, and aac, which need ffmpeg to decode (libsndfile alone can't
+handle them). Rather than getting ffmpeg via apt-get, which pulls
+system packages.txt and exposed the deploy to a broken Debian mirror
+(bullseye-security giving expired InRelease errors), ffmpeg comes from
+the imageio-ffmpeg pip package instead. This installs a static binary
+entirely through pip, so apt-get never runs at all and Community
+Cloud's apt mirror state can't block your deploy.
 
-    app53_patched.py
+If you ever do need real apt packages for something else, add
+packages.txt back, but keep in mind that reintroduces the same
+mirror-outage risk described above.
 
 ## Steps
 
